@@ -19,3 +19,7 @@ sudo dmesg
 cd /proc/   --> si sale el de ram todo good
 cat ram  --> con eso leemos la ram
 
+
+iniciar compose: 
+docker-compose build   # Construye las imágenes
+docker-compose up      # Inicia los contenedores

@@ -1,50 +1,35 @@
-version: '3.8'
-
 services:
   db:
-    image: mysql:8.0
+    image: ezapeta/mysql_custom:8.0
     container_name: mysql_db
+    env_file:
+      - .env
     restart: always
     ports:
       - "3307:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_INITDB_SKIP_TZINFO: 1
     volumes:
       - db_data:/var/lib/mysql
-      - ${SQL_INIT_DIR}/script_201801719.sql:/docker-entrypoint-initdb.d/script_201801719.sql
-
+  
   api:
-    image: node:18-alpine
+    image: ezapeta/api_custom:18-alpine
     container_name: api_service
+    env_file:
+      - .env
     working_dir: /app
     volumes:
       - ./api:/app 
     ports:
-      - "3000:3000"
-    environment:
-      DB_HOST: ${DB_HOST}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_NAME: ${DB_NAME}
-      NODE_ENV: ${NODE_ENV}
-      API_KEY: ${API_KEY}
-    command: ["sh", "-c", "npm install && node index.js"]
+      - "5000:4000"
     depends_on:
       - db
-
+  
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
     ports:
       - "3001:3000"
-    environment:
-      GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER}
-      GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
-      GF_SERVER_ROOT_URL: ${GF_SERVER_ROOT_URL}
+    env_file:
+      - .env
     depends_on:
       - db
     volumes:

@@ -2,20 +2,27 @@
 const express = require('express');
 const { Sequelize, DataTypes } = require('sequelize');
 const bodyParser = require('body-parser');
+require('dotenv').config();
 
 // Inicialización de Express
 const app = express();
-const port = 3000;
+const port = 4000;
 
 // Middleware
 app.use(bodyParser.json());
 
 // Configuración de Sequelize
-const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
-    host: process.env.DB_HOST || 'localhost',
+const sequelize = new Sequelize(
+  process.env.DB_NAME,      // Base de datos
+  process.env.DB_USER,       // Usuario MySQL
+  process.env.DB_PASSWORD,       // Contraseña MySQL
+  {
+    host: process.env.DB_HOST,         // Nombre del servicio de MySQL en Docker Compose
+    port: 3306,         // Puerto mapeado del host al contenedor MySQL
     dialect: 'mysql',
-  });
-  
+  }
+);
+
 
 // Modelos
 const RamMetric = sequelize.define('RamMetric', {
@@ -95,6 +102,19 @@ app.post('/api/cpu-metric', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error al insertar la métrica de CPU.' });
+  }
+});
+
+
+// Ruta de Health Check
+app.get('/api/health', async (req, res) => {
+  try {
+    // Comprobar conexión a la base de datos
+    await sequelize.authenticate();
+    res.status(200).json({ status: 'ok', message: 'Servicio activo y conectado a la base de datos.' });
+  } catch (error) {
+    console.error('Error en el Health Check:', error);
+    res.status(500).json({ status: 'error', message: 'Problema con la conexión a la base de datos.' });
   }
 });
 

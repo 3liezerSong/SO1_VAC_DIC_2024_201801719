@@ -2,8 +2,12 @@ CREATE DATABASE IF NOT EXISTS monitoring_db;
 
 USE monitoring_db;
 
+GRANT ALL PRIVILEGES ON monitoring_db.* TO 'grafana_user'@'%';
+FLUSH PRIVILEGES;
+
 CREATE TABLE IF NOT EXISTS ram_metric (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    metric_type ENUM('RAM') NOT NULL, 
     total_ram INT NOT NULL,                   
     free_ram INT NOT NULL,
     used_ram INT NOT NULL,
@@ -31,13 +35,3 @@ CREATE TABLE IF NOT EXISTS cpu_metric (
     updated_by VARCHAR(255),             
     version INT DEFAULT 0
 );
-
-/*
-Constuir un json con la informacion de la memoria RAM
-{
-    "total_ram": 0,
-    "free_ram": 0,
-    "used_ram": 0
-    "percentage_used": 0
-}
-*/

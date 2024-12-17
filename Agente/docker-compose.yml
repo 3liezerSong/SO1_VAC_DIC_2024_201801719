@@ -1,0 +1,17 @@
+version: '3'
+services:
+  backend:
+    image: ezapeta/agente_custom
+    container_name: 'agente_go_201801719'
+    restart: always
+    volumes:
+      - type: bind
+        source: /proc
+        target: /proc
+      - /proc:/proc
+      - /etc/passwd:/etc/passwd
+    pid: host
+    user: root
+    privileged: true
+    ports:
+      - '5200:5200'

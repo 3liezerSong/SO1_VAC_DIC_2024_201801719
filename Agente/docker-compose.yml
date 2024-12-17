@@ -3,12 +3,15 @@ services:
     image: ezapeta/agente_custom:golang
     container_name: 'agente_go'
     restart: always
+    environment:
+      - VM_HOSTNAME_FILE=/etc/hostname
     volumes:
       - type: bind
         source: /proc
         target: /proc
       - /proc:/proc
       - /etc/passwd:/etc/passwd
+      - /etc/hostname:/etc/hostname:ro
     pid: host
     user: root
     privileged: true

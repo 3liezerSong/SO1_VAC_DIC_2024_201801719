@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"os/exec"
 	"time"
-
+	"os"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/shirou/gopsutil/cpu"
@@ -66,6 +66,20 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Welcome!")
 }
 
+func getVMHostname() (string, error) {
+    hostnameFile := os.Getenv("VM_HOSTNAME_FILE")
+    if hostnameFile == "" {
+        return "", fmt.Errorf("VM_HOSTNAME_FILE environment variable is not set")
+    }
+
+    hostname, err := ioutil.ReadFile(hostnameFile)
+    if err != nil {
+        return "", fmt.Errorf("failed to read hostname file: %v", err)
+    }
+
+    return string(hostname), nil
+}
+
 // Función para obtener el hostname
 func getHostName() (string, error) {
 	cmd := exec.Command("hostname")
@@ -107,7 +121,7 @@ func postScheduledData() {
 				fmt.Println(errCpu)
 			}
 
-			ip, err := getIPAddress()
+			ip, err := getVMHostname()
 			if err != nil {
 				fmt.Println("Error al obtener la IP:", err)
 			}

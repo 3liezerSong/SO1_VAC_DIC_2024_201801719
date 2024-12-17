@@ -37,10 +37,11 @@ const RamMetric = sequelize.define('RamMetric', {
 // CpuMetric Model
 const CpuMetric = sequelize.define('CpuMetric', {
   ip_vm: { type: DataTypes.STRING, allowNull: false },
+  percentage_used: { type: DataTypes.DECIMAL(5, 2), allowNull: false },
   pid: { type: DataTypes.INTEGER, allowNull: false },
   process_name: { type: DataTypes.STRING, allowNull: false },
-  user_name: { type: DataTypes.STRING, allowNull: false },
-  process_state: { type: DataTypes.STRING, allowNull: false },
+  user_name: { type: DataTypes.INTEGER, allowNull: false },
+  process_state: { type: DataTypes.INTEGER, allowNull: false },
   metric_type: { type: DataTypes.ENUM('CPU'), allowNull: false },
   metric_value: { type: DataTypes.DECIMAL(5, 2), allowNull: false },
   metric_date: { type: DataTypes.DATE, allowNull: false },
@@ -55,8 +56,8 @@ app.post('/api/ram-metric', async (req, res) => {
     const {ip, total_ram, free_ram, used_ram, percentage_used} = req.body;
 
     const metric_type = "RAM";
-    var metric_date =  new Date();
-    const ramMetric = await RamMetric.create({
+    let metric_date =  new Date();
+    await RamMetric.create({
       ip_vm: ip,
       metric_type,
       total_ram,
@@ -75,19 +76,12 @@ app.post('/api/ram-metric', async (req, res) => {
 
 app.post('/api/cpu-metric', async (req, res) => {
   try {
-    const { ip, Usage, tasks } = req.body;
-    if (!ip || !Usage || !tasks) {
-      return res.status(400).json({ error: 'Faltan campos obligatorios.' });
-    }
+    let { ip, percentage_used, tasks } = req.body;
     const metric_type = 'CPU';
-    const metric_date = new Date();
+    let  metric_date = new Date();
     
     for (const task of tasks) {
-      const { pid, name, user, state, ram, father } = task;
-
-      if (!pid || !name || !user || !state || !father) {
-        return res.status(400).json({ error: 'Faltan campos obligatorios en las tareas.' });
-      }
+      let { pid, name, user, state, ram, father } = task;
 
       if (ram === null || ram === undefined) { 
         ram = 0; 
@@ -96,6 +90,7 @@ app.post('/api/cpu-metric', async (req, res) => {
       await CpuMetric.create({
         ip_vm: ip,
         metric_type,
+        percentage_used,
         pid,
         process_name: name,
         user_name: user,
@@ -122,8 +117,8 @@ app.post('/api/cpu-metric-v2', async (req, res) => {
       return res.status(400).json({ error: 'Faltan campos obligatorios.' });
     }
     const metric_type = 'CPU';
-    var metric_date = new Date();
-    const cpuMetric = await CpuMetric.create({
+    let metric_date = new Date();
+    await CpuMetric.create({
       ip_vm,
       metric_type,
       pid,

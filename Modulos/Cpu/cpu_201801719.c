@@ -125,13 +125,13 @@ static struct proc_ops operaciones = {
 
 static int _insert(void) {
     proc_create("cpu", 0, NULL, &operaciones);
-    printk(KERN_INFO "Creado el archivo /proc/cpu\n - Clase 4\n");
+    printk(KERN_INFO "Creado el archivo /proc/cpu\n ");
     return 0;
 }
 
 static void _delete(void) {
-    remove_proc_entry("cpu", NULL);
-    printk(KERN_INFO "Eliminado el archivo /proc/cpu\n - Clase 4\n");
+    remove_proc_entry("cpu_", NULL);
+    printk(KERN_INFO "Eliminado el archivo /proc/cpu\n");
 }
 
 module_init(_insert);

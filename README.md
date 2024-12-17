@@ -1,26 +1,95 @@
 # so1_2s_201801719
 
+token github
 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
 
 
-PID
-Nombre del Proceso
-Usuario
-Estado
-Porcentaje Ram
+# Instalar Golang
+cd
+wget https://go.dev/dl/go1.21.4.linux-amd64.tar.gz -O go.tar.gz
+sudo tar -xzvf go.tar.gz -C /usr/local
+echo export PATH=$HOME/go/bin:/usr/local/go/bin:$PATH >> ~/.profile
+source ~/.profile
+# go version
 
+# MODULO RAM
 
+# Instalación de stress
+sudo apt update
+sudo apt install stress
+# Stress de ram por 60 segundos
+# stress --vm 1 --vm-bytes 1G --timeout 60s &
+# Instalar headers
+uname -r
+sudo apt update
+sudo apt install linux-headers-$(uname -r) build-essential
+ls -l /lib/modules/$(uname -r)/build
+# Ejecutar modulo de ram
 make clean
 make all
- 
-sudo insmod ram.ko
-sudo dmesg
+sudo insmod ram_201801719.ko
+sudo dmesg ó sudo dmesg | tail
+cd /proc/
+cat ram
+# PID
+# Nombre del Proceso
+# Usuario
+# Estado
+# Rorcentaje Ram
 
-cd /proc/   --> si sale el de ram todo good
-cat ram  --> con eso leemos la ram
+# Eliminar modulo si es necesario
+# sudo rmmod ram_201801719
+# sudo dmesg | tail
+# make clean
 
 
-iniciar compose: 
+# MODULO CPU
+
+# Instalación de stress
+sudo apt update
+# sudo apt install stress
+# Stress de cpu por 60 segundos
+# stress --vm 1 --vm-bytes 1G --timeout 60s &
+# Instalar headers
+# uname -r
+# sudo apt update
+# sudo apt install linux-headers-$(uname -r) build-essential
+# ls -l /lib/modules/$(uname -r)/build
+# Ejecutar modulo de ram
+# make clean
+make all
+sudo insmod cpu_201801719.ko
+sudo dmesg ó sudo dmesg | tail
+sudo lsmod | grep cpu
+cd /proc/
+cat cpu
+# PID
+# Nombre del Proceso
+# Usuario
+# Estado
+# Rorcentaje Ram
+
+# Eliminar modulo si es necesario
+# sudo rmmod ram_201801719
+# sudo dmesg | tail
+# make clean
+
+# AGENTE
+docker build -t agente_201801719:golang .
+-docker hub
+docker login -u ezapeta
+dckr_pat_t2nv2nUtjArSeopcrKRHcB64zu0
+docker tag agente_201801719:1.21.4-alpine ezapeta/agente_201801719:1.21.4-alpine
+docker push ezapeta/agente_201801719:1.21.4-alpine
+
+# Instalar golang
+go mod init Agente
+go mod tidy
+go build main.go
+go run main.go
+
+
+# comandos contruir contenedores
 docker-compose build   # Construye las imágenes
 docker-compose up      # Inicia los contenedores
 
@@ -66,3 +135,27 @@ docker push ezapeta/api_custom:18-alpine
 si cambio algo correr compose otra vez: 
 docker-compose down
 docker-compose up --build
+
+
+
+
+
+
+sudo apt-get install -reinstall linux-headers-$(username -r)
+
+
+version: '3.8'
+
+services:
+  app:
+    image: <tu_usuario_en_dockerhub>/my-go-app:latest
+    container_name: my-go-app-container
+    ports:
+      - "8080:8080"
+    volumes:
+      - /proc:/host/proc
+      - /sys:/host/sys
+      - /dev:/dev
+      - /etc/hostname:/etc/hostname
+    privileged: true
+    restart: always

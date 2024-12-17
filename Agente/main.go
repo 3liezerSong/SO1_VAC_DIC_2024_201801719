@@ -42,6 +42,16 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Welcome!")
 }
 
+// Función para obtener el hostname
+func getHostName() (string, error) {
+	cmd := exec.Command("hostname")
+	out, err := cmd.Output()
+	if err != nil {
+		return "", err
+	}
+	return string(out), nil
+}
+
 // postScheduledData
 func postScheduledData() {
 	ticker := time.NewTicker(1 * time.Second)
@@ -51,6 +61,14 @@ func postScheduledData() {
 		select {
 		case <-ticker.C:
 			fmt.Println("======= DATOS MODULO CPU =======")
+			fmt.Println(" ")
+			hostname, err := getHostName()
+			if err != nil {
+				fmt.Println("Error al obtener el hostname:", err)
+			} else {
+				// Incluir el hostname en la respuesta
+				fmt.Printf("Hostname: %s\n", hostname)
+			}
 			fmt.Println(" ")
 
 			cmdCpu := exec.Command("sh", "-c", "cat /proc/cpu")
@@ -62,7 +80,7 @@ func postScheduledData() {
 			//---CPU
 			fmt.Println("======= CPU =======")
 			var cpu_info Cpu
-			err := json.Unmarshal([]byte(outCpu), &cpu_info)
+			err = json.Unmarshal([]byte(outCpu), &cpu_info)
 			if err != nil {
 				fmt.Println(err)
 			}

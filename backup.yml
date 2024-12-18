@@ -44,12 +44,234 @@ services:
     environment:
       GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER}
       GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
-      GF_SERVER_ROOT_URL: ${GF_SERVER_ROOT_URL}
-    depends_on:
-      - db
-    volumes:
-      - grafana_data:/var/lib/grafana
+      GF_SERVER_ROOT_URL: ${GF_SERVE
 
-volumes:
-  db_data:
-  grafana_data:
+
+percentage_used": 85,
+asks": [
+{
+  "pid": 1,
+  "name": "systemd",
+  "state": 1,
+  "user": 0,
+  "ram": 12,
+  "father": 0
+},
+{
+  "pid": 2,
+  "name": "kthreadd",
+  "state": 1,
+  "user": 0,
+  "ram": null,
+  "father": 0
+},
+{
+  "pid": 3,
+  "name": "rcu_gp",
+  "state": 1026,
+  "user": 0,
+  "ram": null,
+  "father": 2
+}
+}
+
+{
+  "pid": 4,
+  "name": "rcu_par_gp",
+  "state": 1026,
+  "user": 0,
+  "ram": null,
+  "father": 2
+},
+{
+  "pid": 5,
+  "name": "slub_flushwq",
+  "state": 1026,
+  "user": 0,
+  "ram": null,
+  "father": 2
+},
+{
+  "pid": 6,
+  "name": "netns",
+  "state": 1026,
+  "user": 0,
+  "ram": null,
+  "father": 2
+},
+{
+  "pid": 7,
+  "name": "kworker/0:0",
+  "state": 1026,
+  "user": 0,
+  "ram": null,
+  "father": 2
+},
+{
+  "pid": 8,
+  "name": "kworker/0:0H",
+  "state": 1026,
+  "user": 0,
+  "ram": null,
+  "father": 2
+},
+{
+  "pid": 9,
+  "name": "kworker/u4:0",
+  "state": 1026,
+  "user": 0,
+  "ram": null,
+  "father": 2
+},
+{
+  "pid": 10,
+  "name": "mm_percpu_wq",
+  "state": 1026,
+  "user": 0,
+  "ram": null,
+  "father": 2
+},
+{
+  "pid": 11,
+  "name": "rcu_tasks_rude_",
+  "state": 1,
+  "user": 0,
+  "ram": null,
+  "father": 2
+},
+{
+  "pid": 12,
+  "name": "rcu_tasks_trace",
+  "state": 1,
+  "user": 0,
+  "ram": null,
+  "father": 2
+},
+{
+  "pid": 13,
+  "name": "ksoftirqd/0",
+  "state": 1,
+  "user": 0,
+  "ram": null,
+  "father": 2
+},
+{
+  "pid": 14,
+  "name": "rcu_sched",
+  "state": 1026,
+  "user": 0,
+  "ram": null,
+  "father": 2
+},
+{
+  "pid": 15,
+  "name": "migration/0",
+  "state": 1,
+  "user": 0,
+  "ram": null,
+  "father": 2
+},
+{
+  "pid": 16,
+  "name": "idle_inject/0",
+  "state": 1,
+  "user": 0,
+  "ram": null,
+  "father": 2
+},
+{
+  "pid": 17,
+  "name": "kworker/0:1",
+  "state": 1026,
+  "user": 0,
+  "ram": null,
+  "father": 2
+},
+{
+  "pid": 18,
+  "name": "cpuhp/0",
+  "state": 1,
+  "user": 0,
+  "ram": null,
+  "father": 2
+},
+{
+  "pid": 19,
+  "name": "cpuhp/1",
+  "state": 1,
+  "user": 0,
+  "ram": null,
+  "father": 2
+},
+{
+  "pid": 20,
+  "name": "idle_inject/1",
+  "state": 1,
+  "user": 0,
+  "ram": null,
+  "father": 2
+},
+{
+  "pid": 21,
+  "name": "migration/1",
+  "state": 1,
+  "user": 0,
+  "ram": null,
+  "father": 2
+},
+{
+  "pid": 22,
+  "name": "ksoftirqd/1",
+  "state": 1,
+  "user": 0,
+  "ram": null,
+  "father": 2
+},
+{
+  "pid": 23,
+  "name": "kworker/1:0",
+  "state": 1026,
+  "user": 0,
+  "ram": null,
+  "father": 2
+},
+{
+  "pid": 24,
+  "name": "kworker/1:0H",
+  "state": 1026,
+  "user": 0,
+  "ram": null,
+  "father": 2
+},
+{
+  "pid": 25,
+  "name": "kdevtmpfs",
+  "state": 1,
+  "user": 0,
+  "ram": null,
+  "father": 2
+},
+{
+  "pid": 26,
+  "name": "inet_frag_wq",
+  "state": 1026,
+  "user": 0,
+  "ram": null,
+  "father": 2
+},
+{
+  "pid": 27,
+  "name": "kauditd",
+  "state": 1,
+  "user": 0,
+  "ram": null,
+  "father": 2
+},
+{
+  "pid": 28,
+  "name": "kworker/1:1",
+  "state": 1026,
+  "user": 0,
+  "ram": null,
+  "father": 2
+},

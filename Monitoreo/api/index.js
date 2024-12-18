@@ -1,10 +1,7 @@
-// Dependencias
 const express = require('express');
-const { Sequelize, DataTypes } = require('sequelize');
+const { Sequelize, DataTypes, DATE } = require('sequelize');
 const bodyParser = require('body-parser');
 require('dotenv').config();
-
-// Inicialización de Express
 const app = express();
 const port = 4000;
 
@@ -13,19 +10,21 @@ app.use(bodyParser.json());
 
 // Configuración de Sequelize
 const sequelize = new Sequelize(
-  process.env.DB_NAME,      // Base de datos
-  process.env.DB_USER,       // Usuario MySQL
-  process.env.DB_PASSWORD,       // Contraseña MySQL
+  process.env.DB_NAME,
+  process.env.DB_USER,     
+  process.env.DB_PASSWORD,   
   {
-    host: process.env.DB_HOST,         // Nombre del servicio de MySQL en Docker Compose
-    port: 3306,         // Puerto mapeado del host al contenedor MySQL
+    host: process.env.DB_HOST, 
+    port: 3306,         
     dialect: 'mysql',
   }
 );
 
 
-// Modelos
+// RamMetric Model
 const RamMetric = sequelize.define('RamMetric', {
+  ip_vm: { type: DataTypes.STRING, allowNull: false },
+  metric_type: { type: DataTypes.ENUM('RAM'), allowNull: false },
   total_ram: { type: DataTypes.INTEGER, allowNull: false },
   free_ram: { type: DataTypes.INTEGER, allowNull: false },
   used_ram: { type: DataTypes.INTEGER, allowNull: false },
@@ -35,8 +34,9 @@ const RamMetric = sequelize.define('RamMetric', {
   tableName: 'ram_metric',
   timestamps: false,
 });
-
+// CpuMetric Model
 const CpuMetric = sequelize.define('CpuMetric', {
+  ip_vm: { type: DataTypes.STRING, allowNull: false },
   pid: { type: DataTypes.INTEGER, allowNull: false },
   process_name: { type: DataTypes.STRING, allowNull: false },
   user_name: { type: DataTypes.STRING, allowNull: false },
@@ -50,17 +50,15 @@ const CpuMetric = sequelize.define('CpuMetric', {
 });
 
 // Rutas
-
-// Ruta para insertar métricas de RAM
 app.post('/api/ram-metric', async (req, res) => {
   try {
-    const { total_ram, free_ram, used_ram, percentage_used, metric_date } = req.body;
+    const {ip, total_ram, free_ram, used_ram, percentage_used} = req.body;
 
-    if (!total_ram || !free_ram || !used_ram || !metric_date) {
-      return res.status(400).json({ error: 'Faltan campos obligatorios.' });
-    }
-
+    const metric_type = "RAM";
+    var metric_date =  new Date();
     const ramMetric = await RamMetric.create({
+      ip_vm: ip,
+      metric_type,
       total_ram,
       free_ram,
       used_ram,
@@ -68,37 +66,75 @@ app.post('/api/ram-metric', async (req, res) => {
       metric_date,
     });
 
-    res.status(201).json(ramMetric);
+    res.status(201);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error al insertar la métrica de RAM.' });
   }
 });
 
-// Ruta para insertar métricas de CPU
 app.post('/api/cpu-metric', async (req, res) => {
   try {
-    const { pid, process_name, user_name, process_state, metric_type, metric_value, metric_date } = req.body;
-
-    if (!pid || !process_name || !user_name || !process_state || !metric_type || !metric_value || !metric_date) {
+    const { ip_vm, percentage_used, processes } = req.body;
+    if (!ip_vm || !percentage_used || !processes) {
       return res.status(400).json({ error: 'Faltan campos obligatorios.' });
     }
+    const metric_type = 'CPU';
+    const metric_date = new Date();
+    
+    for (const process of processes) {
+      const { pid, process_name, user_name, process_state, metric_value, father } = process;
 
-    if (metric_type !== 'CPU') {
-      return res.status(400).json({ error: 'El tipo de métrica debe ser "CPU".' });
+      if (!pid || !process_name || !user_name || !process_state || !father) {
+        return res.status(400).json({ error: 'Faltan campos obligatorios en las tareas.' });
+      }
+
+      if (metric_value === null || metric_value === undefined) { 
+        metric_value = 0; 
+      }
+
+      await CpuMetric.create({
+        ip_vm,
+        metric_type,
+        pid,
+        process_name,
+        user_name,
+        process_state,
+        metric_value,
+        metric_date,
+      });
     }
 
+    res.status(201);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al insertar las métricas de CPU.' });
+  }
+});
+
+
+
+app.post('/api/cpu-metric-v2', async (req, res) => {
+  try {
+    const { ip_vm, percentage_used, pid, process_name, user_name, process_state, metric_value, father} = req.body;
+
+    if ( !ip_vm || !percentage_used || !pid || !process_name || !user_name || !process_state || !metric_value || !father) {
+      return res.status(400).json({ error: 'Faltan campos obligatorios.' });
+    }
+    const metric_type = 'CPU';
+    var metric_date = new Date();
     const cpuMetric = await CpuMetric.create({
+      ip_vm,
+      metric_type,
       pid,
       process_name,
       user_name,
       process_state,
-      metric_type,
       metric_value,
       metric_date,
     });
 
-    res.status(201).json(cpuMetric);
+    res.status(201);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error al insertar la métrica de CPU.' });
@@ -106,10 +142,8 @@ app.post('/api/cpu-metric', async (req, res) => {
 });
 
 
-// Ruta de Health Check
 app.get('/api/health', async (req, res) => {
   try {
-    // Comprobar conexión a la base de datos
     await sequelize.authenticate();
     res.status(200).json({ status: 'ok', message: 'Servicio activo y conectado a la base de datos.' });
   } catch (error) {
@@ -118,7 +152,6 @@ app.get('/api/health', async (req, res) => {
   }
 });
 
-// Inicialización del servidor
 app.listen(port, async () => {
   try {
     await sequelize.authenticate();

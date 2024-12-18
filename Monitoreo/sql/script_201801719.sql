@@ -7,6 +7,7 @@ FLUSH PRIVILEGES;
 
 CREATE TABLE IF NOT EXISTS ram_metric (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    ip_vm VARCHAR(100) NOT NULL,
     metric_type ENUM('RAM') NOT NULL, 
     total_ram INT NOT NULL,                   
     free_ram INT NOT NULL,
@@ -22,11 +23,12 @@ CREATE TABLE IF NOT EXISTS ram_metric (
 
 CREATE TABLE IF NOT EXISTS cpu_metric (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    ip_vm VARCHAR(100) NOT NULL,
+    metric_type ENUM('CPU') NOT NULL, 
     pid INT NOT NULL,                    
     process_name VARCHAR(255) NOT NULL,  
     user_name VARCHAR(255) NOT NULL,     
     process_state VARCHAR(255) NOT NULL, 
-    metric_type ENUM('CPU') NOT NULL, 
     metric_value DECIMAL(5, 2) NOT NULL, 
     metric_date TIMESTAMP NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

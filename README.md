@@ -22,7 +22,7 @@ sudo apt install stress
 # Instalar headers
 uname -r
 sudo apt update
-sudo apt install linux-headers-$(uname -r) build-essential
+sudo apt install linux-headers-$(uname -r) build-essential -y
 ls -l /lib/modules/$(uname -r)/build
 # Ejecutar modulo de ram
 make clean
@@ -94,7 +94,7 @@ go run main.go
 docker-compose build   # Construye las imágenes
 docker-compose up      # Inicia los contenedores
 
-#crear imagen mysql y subir a docker hub
+# crear imagen mysql y subir a docker hub
 -dockerfile mysql
 docker build -t mysql_201801719:8.0 .
 -docker hub
@@ -122,7 +122,7 @@ docker rmi ezapeta/mysql_custom:8.0
 
 
 
-#api de node
+# Api de node
 -dockerfile api node
 docker build -t api_201801719:18-alpine .
 -docker hub
@@ -144,6 +144,15 @@ docker-compose down
 docker rmi $(docker images -q)
 docker-compose down -v
 docker-compose up --build
+
+# eliminar todo
+docker rmi -f ezapeta/mysql_custom:8.0
+docker rmi -f ezapeta/api_custom:18-alpine
+docker rmi -f grafana/grafana:latest
+docker rmi -f ezapeta/agente_custom:golang
+
+docker volume rm monitoreo_db_data monitoreo_grafana_data
+docker exec -it 63111f5af7f9 /bin/sh
 
 
 
@@ -244,6 +253,13 @@ sudo apt install stress -y
 sudo apt install git -y
 sudo apt install make -y
 
+uname -r
+sudo apt install linux-headers-$(uname -r) build-essential -y
+ls -l /lib/modules/$(uname -r)/build
+
+sudo apt update -y
+sudo apt install build-essential gcc -y
+
 wget https://go.dev/dl/go1.21.4.linux-amd64.tar.gz -O go.tar.gz
 sudo tar -C /usr/local -xzf go.tar.gz
 echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.profile
@@ -268,7 +284,25 @@ sudo chmod +x /usr/local/bin/docker-compose
 docker-compose --version
 
 git clone https://3liezerSong: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@github.com/3liezerSong/SO1_VAC_DIC_2024_201801719.git
+
 sudo find / -name "SO1_VAC_DIC_2024_201801719" 2>/dev/null
+cd /SO1_VAC_DIC_2024_201801719/Modulos/Ram
+make all
+sudo insmod ram_201801719.ko
+sudo dmesg
+cd /proc/
+cat ram
+
+cd /SO1_VAC_DIC_2024_201801719/Modulos/Cpu
+make all
+sudo insmod cpu_201801719.ko
+sudo dmesg
+cd /proc/
+cat cpu
+
+sudo find / -name "SO1_VAC_DIC_2024_201801719" 2>/dev/null
+cd /SO1_VAC_DIC_2024_201801719/Agente
+docker-compose up -d
 
 
 

@@ -1,9 +1,12 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
+	"net"
 	"net/http"
 	"os/exec"
 	"time"
@@ -12,6 +15,29 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/shirou/gopsutil/cpu"
 )
+
+/*type Process struct {
+	pid           int     `json:"pid"`
+	process_name  string  `json:"name"`
+	user_name     int     `json:"user"`
+	process_state int     `json:"state"`
+	metric_value  float64 `json:"ram"`
+	father        int     `json:"father"`
+}
+
+type Cpu struct {
+	ip_vm           string    `json:"ip"`
+	percentage_used float64   `json:"percentage_used"`
+	processes       []Process `json:"tasks"`
+}
+
+type Ram struct {
+	ip_vm           string  `json:"ip"`
+	total_ram       float64 `json:"total_ram"`
+	free_ram        float64 `json:"free_ram"`
+	used_ram        float64 `json:"used_ram"`
+	percentage_used float64 `json:"percentage_used"`
+}*/
 
 type Process struct {
 	Pid    int     `json:"pid"`
@@ -23,19 +49,17 @@ type Process struct {
 }
 
 type Cpu struct {
+	IP        string    `json:"ip"`
 	Usage     float64   `json:"percentage_used"`
 	Processes []Process `json:"tasks"`
 }
 
 type Ram struct {
+	IP    string  `json:"ip"`
 	Total float64 `json:"total_ram"`
 	Free  float64 `json:"free_ram"`
 	Used  float64 `json:"used_ram"`
 	Perc  float64 `json:"percentage_used"`
-}
-
-type Ip struct {
-	Ip string `json:"ip"`
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {
@@ -52,6 +76,21 @@ func getHostName() (string, error) {
 	return string(out), nil
 }
 
+func getIPAddress() (string, error) {
+	addrs, err := net.InterfaceAddrs()
+	if err != nil {
+		return "", err
+	}
+	for _, addr := range addrs {
+		if ipNet, ok := addr.(*net.IPNet); ok && !ipNet.IP.IsLoopback() {
+			if ipNet.IP.To4() != nil {
+				return ipNet.IP.String(), nil
+			}
+		}
+	}
+	return "", err
+}
+
 // postScheduledData
 func postScheduledData() {
 	ticker := time.NewTicker(1 * time.Second)
@@ -62,19 +101,15 @@ func postScheduledData() {
 		case <-ticker.C:
 			fmt.Println("======= DATOS MODULO CPU =======")
 			fmt.Println(" ")
-			hostname, err := getHostName()
-			if err != nil {
-				fmt.Println("Error al obtener el hostname:", err)
-			} else {
-				// Incluir el hostname en la respuesta
-				fmt.Printf("Hostname: %s\n", hostname)
-			}
-			fmt.Println(" ")
-
 			cmdCpu := exec.Command("sh", "-c", "cat /proc/cpu")
 			outCpu, errCpu := cmdCpu.CombinedOutput()
 			if errCpu != nil {
 				fmt.Println(errCpu)
+			}
+
+			ip, err := getIPAddress()
+			if err != nil {
+				fmt.Println("Error al obtener la IP:", err)
 			}
 
 			//---CPU
@@ -84,8 +119,9 @@ func postScheduledData() {
 			if err != nil {
 				fmt.Println(err)
 			}
+			cpu_info.IP = ip
 			//Mandar el post
-			//url := "http://localhost:8080/cpu"
+			url := "http://34.28.123.123:5000/api/cpu-metric"
 			//Manda cpu_info que es un json
 			p_cpu, err := cpu.Percent(time.Second, false)
 			if err != nil {
@@ -95,18 +131,18 @@ func postScheduledData() {
 			jsonValue, _ := json.Marshal(cpu_info)
 			fmt.Println(string(jsonValue))
 			//Mandar el json a la url
-			//response, err := http.Post(url, "application/json", bytes.NewBuffer(jsonValue))
-			//if err != nil {
-			//	fmt.Println(err)
-			//} else {
-			//	defer response.Body.Close()
-			//	responseBody, err := ioutil.ReadAll(response.Body)
-			//	if err != nil {
-			//		fmt.Println(err)
-			//	} else {
-			//		fmt.Println("\x1b[32m", string(responseBody), "\x1b[0m")
-			//	}
-			//}
+			response, err := http.Post(url, "application/json", bytes.NewBuffer(jsonValue))
+			if err != nil {
+				fmt.Println(err)
+			} else {
+				defer response.Body.Close()
+				responseBody, err := ioutil.ReadAll(response.Body)
+				if err != nil {
+					fmt.Println(err)
+				} else {
+					fmt.Println("\x1b[32m", string(responseBody), "\x1b[0m")
+				}
+			}
 			fmt.Println(" ")
 			fmt.Println("======= DATOS MODULO RAM =======")
 			fmt.Println(" ")
@@ -123,25 +159,25 @@ func postScheduledData() {
 			if err != nil {
 				fmt.Println(err)
 			}
-
+			ram_info.IP = ip
 			//Mandar respuesta
-			//url = "http://localhost:8080/ram"
+			url = "http://34.28.123.123:5000/api/ram-metric"
 			//Manda ram_info que es un json
 			jsonValue, _ = json.Marshal(ram_info)
 			fmt.Println(string(jsonValue))
 			//Mandar el json a la url
-			//response, err = http.Post(url, "application/json", bytes.NewBuffer(jsonValue))
-			//if err != nil {
-			//	fmt.Println(err)
-			//} else {
-			//	defer response.Body.Close()
-			//	responseBody, err := ioutil.ReadAll(response.Body)
-			//	if err != nil {
-			//		fmt.Println(err)
-			//	} else {
-			//		fmt.Println("\x1b[32m", string(responseBody), "\x1b[0m")
-			//	}
-			//}
+			response, err = http.Post(url, "application/json", bytes.NewBuffer(jsonValue))
+			if err != nil {
+				fmt.Println(err)
+			} else {
+				defer response.Body.Close()
+				responseBody, err := ioutil.ReadAll(response.Body)
+				if err != nil {
+					fmt.Println(err)
+				} else {
+					fmt.Println("\x1b[32m", string(responseBody), "\x1b[0m")
+				}
+			}
 			fmt.Println(" ")
 		}
 	}

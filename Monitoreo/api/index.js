@@ -66,7 +66,7 @@ app.post('/api/ram-metric', async (req, res) => {
       metric_date,
     });
 
-    res.status(201);
+    res.status(201).json({ message: 'Guardado' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error al insertar la métrica de RAM.' });
@@ -75,37 +75,37 @@ app.post('/api/ram-metric', async (req, res) => {
 
 app.post('/api/cpu-metric', async (req, res) => {
   try {
-    const { ip_vm, percentage_used, processes } = req.body;
-    if (!ip_vm || !percentage_used || !processes) {
+    const { ip, Usage, tasks } = req.body;
+    if (!ip || !Usage || !tasks) {
       return res.status(400).json({ error: 'Faltan campos obligatorios.' });
     }
     const metric_type = 'CPU';
     const metric_date = new Date();
     
-    for (const process of processes) {
-      const { pid, process_name, user_name, process_state, metric_value, father } = process;
+    for (const task of tasks) {
+      const { pid, name, user, state, ram, father } = task;
 
-      if (!pid || !process_name || !user_name || !process_state || !father) {
+      if (!pid || !name || !user || !state || !father) {
         return res.status(400).json({ error: 'Faltan campos obligatorios en las tareas.' });
       }
 
-      if (metric_value === null || metric_value === undefined) { 
-        metric_value = 0; 
+      if (ram === null || ram === undefined) { 
+        ram = 0; 
       }
 
       await CpuMetric.create({
-        ip_vm,
+        ip_vm: ip,
         metric_type,
         pid,
-        process_name,
-        user_name,
-        process_state,
-        metric_value,
+        process_name: name,
+        user_name: user,
+        process_state: state,
+        metric_value: ram,
         metric_date,
       });
     }
 
-    res.status(201);
+    res.status(201).json({ message: 'Guardado' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error al insertar las métricas de CPU.' });
@@ -162,3 +162,4 @@ app.listen(port, async () => {
     console.error('No se pudo conectar a la base de datos:', error);
   }
 });
+

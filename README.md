@@ -156,24 +156,6 @@ docker exec -it 63111f5af7f9 /bin/sh
 
 
 
-sudo apt-get install -reinstall linux-headers-$(username -r)
-
-
-version: '3.8'
-
-services:
-  app:
-    image: <tu_usuario_en_dockerhub>/my-go-app:latest
-    container_name: my-go-app-container
-    ports:
-      - "8080:8080"
-    volumes:
-      - /proc:/host/proc
-      - /sys:/host/sys
-      - /dev:/dev
-      - /etc/hostname:/etc/hostname
-    privileged: true
-    restart: always
 
 
 

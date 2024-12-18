@@ -3,13 +3,9 @@
 token github
 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
 
-# Instalar docker compose
-sudo apt update
-sudo apt install docker-compose -y
-
-
 # Instalar Golang
 cd
+sudo apt update
 wget https://go.dev/dl/go1.21.4.linux-amd64.tar.gz -O go.tar.gz
 sudo tar -xzvf go.tar.gz -C /usr/local
 echo export PATH=$HOME/go/bin:/usr/local/go/bin:$PATH >> ~/.profile
@@ -83,8 +79,8 @@ docker build -t agente_201801719:golang .
 -docker hub
 docker login -u ezapeta
 dckr_pat_t2nv2nUtjArSeopcrKRHcB64zu0
-docker tag agente_201801719:golang ezapeta/agente_201801719:golang
-docker push ezapeta/agente_201801719:golang
+docker tag agente_201801719:golang ezapeta/agente_custom:golang
+docker push ezapeta/agente_custom:golang
 docker-compose up -d
 
 # Instalar golang
@@ -169,3 +165,110 @@ services:
       - /etc/hostname:/etc/hostname
     privileged: true
     restart: always
+
+
+
+# plantilla
+
+#!/bin/bash 
+sudo apt update
+sudo apt install stress -y
+sudo apt install git -y
+sudo apt install make -y
+
+apt-get update -y
+wget https://go.dev/dl/go1.21.4.linux-amd64.tar.gz -O go.tar.gz
+sudo tar -C /usr/local -xzf go.tar.gz
+echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.profile
+source ~/.profile
+
+sudo apt-get update
+sudo apt-get install ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \ sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+
+git clone https://3liezerSong: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@github.com/3liezerSong/SO1_VAC_DIC_2024_201801719.git
+
+
+
+
+
+
+
+
+
+#!/bin/bash 
+sudo apt update -y
+sudo apt install stress -y
+sudo apt install git -y
+sudo apt install make -y
+
+wget https://go.dev/dl/go1.21.4.linux-amd64.tar.gz -O go.tar.gz
+sudo tar -C /usr/local -xzf go.tar.gz
+echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.profile
+source ~/.profile
+go version
+
+sudo apt-get update
+sudo apt-get install ca-certificates curl -y
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+
+git clone https://3liezerSong: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@github.com/3liezerSong/SO1_VAC_DIC_2024_201801719.git
+
+
+
+
+
+
+
+#!/bin/bash 
+sudo apt update -y
+sudo apt install stress -y
+sudo apt install git -y
+sudo apt install make -y
+
+wget https://go.dev/dl/go1.21.4.linux-amd64.tar.gz -O go.tar.gz
+sudo tar -C /usr/local -xzf go.tar.gz
+echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.profile
+source ~/.profile
+go version
+
+sudo apt-get update
+sudo apt-get install ca-certificates curl -y
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+
+sudo curl -L "https://github.com/docker/compose/releases/download/v2.27.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+docker-compose --version
+
+git clone https://3liezerSong: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@github.com/3liezerSong/SO1_VAC_DIC_2024_201801719.git
+sudo find / -name "SO1_VAC_DIC_2024_201801719" 2>/dev/null
+
+
+

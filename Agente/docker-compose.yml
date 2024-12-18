@@ -1,7 +1,7 @@
 services:
   agente:
-    image: ezapeta/agente_custom
-    container_name: 'agente_go_201801719'
+    image: ezapeta/agente_custom:golang
+    container_name: 'agente_go'
     restart: always
     volumes:
       - type: bind

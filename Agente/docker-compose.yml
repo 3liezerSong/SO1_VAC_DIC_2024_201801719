@@ -1,5 +1,5 @@
 services:
-  backend:
+  agente:
     image: ezapeta/agente_custom
     container_name: 'agente_go_201801719'
     restart: always

@@ -3,6 +3,10 @@
 token github
 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
 
+# Instalar docker compose
+sudo apt update
+sudo apt install docker-compose -y
+
 
 # Instalar Golang
 cd
@@ -79,8 +83,9 @@ docker build -t agente_201801719:golang .
 -docker hub
 docker login -u ezapeta
 dckr_pat_t2nv2nUtjArSeopcrKRHcB64zu0
-docker tag agente_201801719:1.21.4-alpine ezapeta/agente_201801719:1.21.4-alpine
-docker push ezapeta/agente_201801719:1.21.4-alpine
+docker tag agente_201801719:golang ezapeta/agente_201801719:golang
+docker push ezapeta/agente_201801719:golang
+docker-compose up -d
 
 # Instalar golang
 go mod init Agente
@@ -135,9 +140,14 @@ docker push ezapeta/api_custom:18-alpine
 si cambio algo correr compose otra vez: 
 docker-compose down
 docker-compose up --build
+docker-compose restart
 
 
-
+# bajar todo
+docker-compose down
+docker rmi $(docker images -q)
+docker-compose down -v
+docker-compose up --build
 
 
 

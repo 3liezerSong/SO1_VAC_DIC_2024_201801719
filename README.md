@@ -197,9 +197,8 @@ docker-compose restart
 #### Bajar todo
 ```bash
 docker-compose down
-docker rmi $(docker images -q)
+docker rmi -f $(docker images -q)
 docker-compose down -v
-docker-compose up --build
 ```
 
 #### Eliminar todo
